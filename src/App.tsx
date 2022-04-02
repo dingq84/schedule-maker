@@ -1,26 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import MainLayout from './layout/main'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<div className="w-screen h-screen">
+			<MainLayout>
+				<main className="bg-gray-secondary-300 flex-grow px-[30px] py-12">
+					<h1 className="text-gray-secondary-900 text-4xl tracking-tight font-bold">Welcome</h1>
+				</main>
+			</MainLayout>
+		</div>
+	)
 }
 
-export default App;
+export default App
