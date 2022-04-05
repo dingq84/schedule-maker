@@ -2,7 +2,7 @@
 import { useState, Fragment, startTransition, useEffect } from 'react'
 import { Dialog, Switch, Transition } from '@headlessui/react'
 import { useForm, Controller } from 'react-hook-form'
-import { PlusIcon, PlayIcon, PauseIcon } from '@heroicons/react/solid'
+import { PlusIcon, PlayIcon, PauseIcon, TrashIcon } from '@heroicons/react/solid'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { Row } from 'react-table'
@@ -52,6 +52,9 @@ interface TaskForm extends Omit<TaskProps, 'time' | 'startTime' | 'endTime'> {
 const Tasks: React.FC = () => {
 	const [tasks, setTasks] = useState<Task[]>([])
 	const [isOpen, setIsOpen] = useState(false)
+	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+	const [taskId, setTaskId] = useState('')
+
 	const {
 		register,
 		handleSubmit,
@@ -103,7 +106,6 @@ const Tasks: React.FC = () => {
 
 	const closeModal = (): void => {
 		setIsOpen(false)
-
 		startTransition(() => {
 			reset()
 		})
@@ -135,6 +137,23 @@ const Tasks: React.FC = () => {
 		setTasks([...tasks.slice(0, index), newTask, ...tasks.slice(index + 1, tasks.length)])
 	}
 
+	const handleDelete = (): void => {
+		setTasks((previous) => previous.filter((task) => task.id !== taskId))
+		closeDeleteDialog()
+		startTransition(() => {
+			setTaskId('')
+		})
+	}
+
+	const openDeleteDialog = (data: Row<Task>): void => {
+		setTaskId(data.original.id)
+		setIsDeleteOpen(true)
+	}
+
+	const closeDeleteDialog = (): void => {
+		setIsDeleteOpen(false)
+	}
+
 	return (
 		<main className="bg-gray-secondary-300 flex-grow px-2 py-6 overflow-hidden flex flex-col  md:px-[30px] md:py-12">
 			<div className="flex justify-between flex-shrink-0 mb-5">
@@ -156,18 +175,82 @@ const Tasks: React.FC = () => {
 					goPage: (page) => {},
 				}}
 				slots={{
-					action: (data) =>
-						data.original.countdown ? (
-							<button onClick={() => handleStop(data)}>
-								<PauseIcon className="text-gray-secondary-900 w-6 h-6" />
+					action: (data) => (
+						<>
+							{data.original.countdown ? (
+								<button onClick={() => handleStop(data)} type="button">
+									<PauseIcon className="text-gray-secondary-900 w-6 h-6" />
+								</button>
+							) : (
+								<button onClick={() => handleStart(data)} type="button">
+									<PlayIcon className="text-gray-secondary-900 w-6 h-6" />
+								</button>
+							)}
+							<button onClick={() => openDeleteDialog(data)} type="button" className="ml-1">
+								<TrashIcon className="text-gray-secondary-900 w-6 h-6" />
 							</button>
-						) : (
-							<button onClick={() => handleStart(data)}>
-								<PlayIcon className="text-gray-secondary-900 w-6 h-6" />
-							</button>
-						),
+						</>
+					),
 				}}
 			/>
+
+			<Transition appear show={isDeleteOpen} as={Fragment}>
+				<Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeDeleteDialog}>
+					<div className="min-h-screen px-4 text-center">
+						<Transition.Child
+							as={Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0"
+							enterTo="opacity-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
+						>
+							<Dialog.Overlay className="fixed inset-0" />
+						</Transition.Child>
+						<span className="inline-block h-screen align-middle" aria-hidden="true">
+							&#8203;
+						</span>
+						<Transition.Child
+							as={Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0 scale-95"
+							enterTo="opacity-100 scale-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100 scale-100"
+							leaveTo="opacity-0 scale-95"
+						>
+							<div className="inline-block text-left transition-all transform bg-white shadow-xl rounded-2xl max-w-md p-6 my-8 overflow-hidden">
+								<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+									Delete Task
+								</Dialog.Title>
+								<p className="text-sm text-gray-500 mt-2">
+									Are you sure you want to delete
+									<strong className="text-lg text-gray-dark-900">
+										{` ${tasks.find((task) => task.id === taskId)?.taskName || ''}`}
+									</strong>
+								</p>
+								<div className="mt-4 flex justify-end items-center">
+									<button
+										type="button"
+										onClick={closeDeleteDialog}
+										className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-900 opacity-70 bg-gray-100 border border-transparent rounded-md hover:bg-gray-200 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+									>
+										Close
+									</button>
+									<button
+										type="button"
+										onClick={handleDelete}
+										className="ml-4 inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+									>
+										Delete
+									</button>
+								</div>
+							</div>
+						</Transition.Child>
+					</div>
+				</Dialog>
+			</Transition>
 
 			<Transition appear show={isOpen} as={Fragment}>
 				<Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeModal}>

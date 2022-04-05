@@ -5,6 +5,7 @@ interface ITask {
 	taskName: string
 	isRepeat: boolean
 	time: number //millisecond
+	originalTime?: number // millisecond
 	countdown?: boolean // 是否開始倒數
 	// 起迄時間，超過起訖以外的時間不進行倒數
 	startTime?: number // millisecond
@@ -23,6 +24,7 @@ class Task implements ITask {
 	taskName: string
 	isRepeat: boolean
 	time: number
+	originalTime?: number | undefined
 	countdown?: boolean | undefined
 	startTime?: number | undefined
 	endTIme?: number | undefined
@@ -32,7 +34,7 @@ class Task implements ITask {
 		this.taskName = props.taskName
 		this.isRepeat = props.isRepeat
 		this.time = props.time
-
+		this.originalTime = props.originalTime ?? props.time
 		this.countdown = props.countdown ?? false
 		this.startTime = props.startTime
 		this.endTIme = props.endTIme
@@ -67,7 +69,7 @@ class Task implements ITask {
 		}
 
 		this.notify()
-		return new Task({ ...this, countdown: false })
+		return new Task({ ...this, countdown: this.isRepeat, time: this.originalTime })
 	}
 
 	notify(): void {

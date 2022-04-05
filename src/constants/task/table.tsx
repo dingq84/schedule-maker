@@ -5,7 +5,7 @@ import Task from '../../models/Task'
 const columns: CustomColumn<Task>[] = [
 	{
 		Header: 'TaskName',
-		accessor: 'name',
+		accessor: 'taskName',
 		width: 140,
 	},
 	{
@@ -15,7 +15,7 @@ const columns: CustomColumn<Task>[] = [
 	},
 	{
 		Header: 'Action',
-		width: 30,
+		width: 50,
 		cellSlot: 'action',
 	},
 ]
