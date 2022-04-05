@@ -6,16 +6,16 @@ const columns: CustomColumn<Task>[] = [
 	{
 		Header: 'TaskName',
 		accessor: 'name',
-		width: 250,
+		width: 140,
 	},
 	{
 		Header: 'Timer',
 		accessor: 'humanTime',
-		width: 200,
+		width: 140,
 	},
 	{
 		Header: 'Action',
-		width: 150,
+		width: 30,
 		cellSlot: 'action',
 	},
 ]

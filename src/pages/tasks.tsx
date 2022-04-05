@@ -110,7 +110,9 @@ const Tasks: React.FC = () => {
 	}
 
 	const createTask = (data: TaskProps): void => {
-		const task = new Task(data)
+		const { name, ...restData } = data
+		const safeName = name.replace(/</g, '').replace(/>/g, '')
+		const task = new Task({ ...restData, name: safeName })
 		setTasks((previous) => [...previous, task])
 	}
 
@@ -134,40 +136,38 @@ const Tasks: React.FC = () => {
 	}
 
 	return (
-		<div className="flex flex-col">
-			<div className="flex justify-between flex-shrink-0">
+		<main className="bg-gray-secondary-300 flex-grow px-2 py-6 overflow-hidden flex flex-col  md:px-[30px] md:py-12">
+			<div className="flex justify-between flex-shrink-0 mb-5">
 				<h1 className="text-gray-secondary-900 text-4xl tracking-tight font-bold">Tasks</h1>
 				<button onClick={openModal}>
 					<PlusIcon className="h-7 w-7 text-indigo-700 hover:opacity-80" />
 				</button>
 			</div>
 
-			<div className="flex-grow-1 mt-4 py-5 pl-4 pr-8 overflow-y-auto flex flex-col space-y-3">
-				<Table<Task>
-					columns={columns}
-					data={tasks}
-					pagination={{
-						pageSize: 10,
-						currentPage: 1,
-						lastPage: 1,
-						totalRows: tasks.length,
-						nextPage: (pageCount) => {},
-						goPage: (page) => {},
-					}}
-					slots={{
-						action: (data) =>
-							data.original.countdown ? (
-								<button onClick={() => handleStop(data)}>
-									<PauseIcon className="text-gray-secondary-900 w-6 h-6" />
-								</button>
-							) : (
-								<button onClick={() => handleStart(data)}>
-									<PlayIcon className="text-gray-secondary-900 w-6 h-6" />
-								</button>
-							),
-					}}
-				/>
-			</div>
+			<Table<Task>
+				columns={columns}
+				data={tasks}
+				pagination={{
+					pageSize: 10,
+					currentPage: 1,
+					lastPage: 1,
+					totalRows: tasks.length,
+					nextPage: (pageCount) => {},
+					goPage: (page) => {},
+				}}
+				slots={{
+					action: (data) =>
+						data.original.countdown ? (
+							<button onClick={() => handleStop(data)}>
+								<PauseIcon className="text-gray-secondary-900 w-6 h-6" />
+							</button>
+						) : (
+							<button onClick={() => handleStart(data)}>
+								<PlayIcon className="text-gray-secondary-900 w-6 h-6" />
+							</button>
+						),
+				}}
+			/>
 
 			<Transition appear show={isOpen} as={Fragment}>
 				<Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeModal}>
@@ -314,7 +314,7 @@ const Tasks: React.FC = () => {
 					</div>
 				</Dialog>
 			</Transition>
-		</div>
+		</main>
 	)
 }
 

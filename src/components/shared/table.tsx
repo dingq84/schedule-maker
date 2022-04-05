@@ -74,7 +74,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		goPage,
 	} = pagination
 
-	const [totalWidth, setTotalWidth] = useState(1000)
+	const [totalWidth, setTotalWidth] = useState(0)
 	const ref = useRef<HTMLDivElement>(null!)
 	const getColumnsSlot = useCallback(
 		(slotName: string) => {
@@ -181,9 +181,13 @@ const Table = <T extends object>(props: TableProps<T>) => {
 
 	return (
 		/* eslint-disable react/jsx-key */
-		<div ref={ref} className="w-full p-0 relative overflow-hidden bg-transparent" {...restProps}>
+		<div
+			ref={ref}
+			className="rounded-lg w-full p-0 relative overflow-hidden bg-transparent"
+			{...restProps}
+		>
 			<div
-				className="scroll h-full w-full border border-solid border-gray-200 rounded-lg"
+				className="scroll w-full border border-solid border-gray-200 rounded-lg"
 				{...getTableProps()}
 			>
 				<div className={`${headerFixed ? 'sticky top-0' : ''}`} style={{ minWidth: totalWidth }}>
@@ -207,75 +211,49 @@ const Table = <T extends object>(props: TableProps<T>) => {
 					))}
 				</div>
 
-				<div {...getTableBodyProps()} style={{ minWidth: totalWidth, height: 'calc(100% - 49px)' }}>
-					{rows.map((row) => {
-						prepareRow(row)
-						return (
-							<div
-								{...row.getRowProps()}
-								className="px-6 py-4 text-black border-b border-solid border-gray-200 cursor-pointer hover:bg-[#E9EBF6]"
-								onClick={() => handleClick(row)}
-							>
-								{row.cells.map((cell, i) => {
-									return (
-										<div
-											className={`${
-												columns[i].align === 'center'
-													? 'text-center'
-													: columns[i].align === 'right'
-													? 'text-right'
-													: ''
-											} text-sm text-black font-normal`}
-											{...cell.getCellProps()}
-										>
-											{cell.render('Cell')}
-										</div>
-									)
-								})}
-							</div>
-						)
-					})}
-				</div>
-			</div>
-
-			<div className="mt-2.5 w-full">
-				<span className="float-right text-xs text-black font-normal">{`總資料筆數：${totalRows}`}</span>
-
-				{/* {disabledPagination ? null : (
-					<div className="flex-center gap-x-2">
-						{canPreviousPage ? (
-							<Button
-								className="btn-text"
-								label={<FontAwesomeIcon icon={faChevronLeft} />}
-								onClick={() => handlePagination(-1)}
-							/>
-						) : null}
-
-						{calculatePagination(currentPage, lastPage).map((pagination) => (
-							<Button
-								key={pagination.toString()}
-								className="btn-text"
-								onClick={() => handleSpecificPagination(pagination)}
-								label={
-									<span
-										tw="w-5 h-5 rounded inline-block leading-5 text-sm text-blue-gray-3"
-										css={[pagination === pageIndex + 1 && tw`bg-blue-2 text-primary`]}
-									>
-										{pagination}
-									</span>
-								}
-							/>
-						))}
-						{canNextPage ? (
-							<Button
-								className="btn-text"
-								label={<FontAwesomeIcon icon={faChevronRight} />}
-								onClick={() => handlePagination(1)}
-							/>
-						) : null}
+				{rows.length ? (
+					<div
+						{...getTableBodyProps()}
+						style={{ minWidth: totalWidth, height: 'calc(100% - 49px)' }}
+					>
+						{rows.map((row) => {
+							prepareRow(row)
+							return (
+								<div
+									{...row.getRowProps()}
+									className="px-6 py-4 text-black border-b border-solid border-gray-200 cursor-pointer hover:bg-[#E9EBF6]"
+									onClick={() => handleClick(row)}
+								>
+									{row.cells.map((cell, i) => {
+										return (
+											<div
+												className={`${
+													columns[i].align === 'center'
+														? 'text-center'
+														: columns[i].align === 'right'
+														? 'text-right'
+														: ''
+												} text-sm text-black font-normal text-ellipsis overflow-hidden px-1`}
+												{...cell.getCellProps()}
+											>
+												{cell.render('Cell')}
+											</div>
+										)
+									})}
+								</div>
+							)
+						})}
 					</div>
-				)} */}
+				) : (
+					<h3 className="text-lg text-center leading-8 text-gray-dark-900">No Data</h3>
+				)}
 			</div>
+
+			{totalRows ? (
+				<div className="mt-2.5 h-4 pr-2">
+					<span className="float-right text-xs text-black font-normal">{`1 - ${totalRows} of ${totalRows}`}</span>
+				</div>
+			) : null}
 		</div>
 	)
 }
