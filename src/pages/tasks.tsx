@@ -1,5 +1,5 @@
 // @ts-ignore
-import { useState, Fragment, startTransition, useEffect } from 'react'
+import { useState, Fragment, startTransition, useEffect, useRef } from 'react'
 import { Dialog, Switch, Transition } from '@headlessui/react'
 import { useForm, Controller } from 'react-hook-form'
 import { PlusIcon, PlayIcon, PauseIcon, TrashIcon } from '@heroicons/react/solid'
@@ -10,6 +10,7 @@ import { Row } from 'react-table'
 import Task, { TaskProps } from '../models/Task'
 import Table from '../components/shared/table'
 import columns from '../constants/task/table'
+import ClientDatabase from '../models/ClientDatabase'
 import useTimer from '../hooks/useTimer'
 
 const schema = yup
@@ -54,6 +55,8 @@ const Tasks: React.FC = () => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 	const [taskId, setTaskId] = useState('')
+	const clientDatabase = useRef(new ClientDatabase('taskDatabase', 1, 'task'))
+	const db = useRef<IDBDatabase>(null!)
 
 	const {
 		register,
@@ -91,6 +94,21 @@ const Tasks: React.FC = () => {
 	}, [watch, clearErrors])
 
 	useEffect(() => {
+		async function getDbData(database: IDBDatabase) {
+			const data = await clientDatabase.current.getDataByKey<TaskProps>(database)
+			setTasks(data.map((item) => new Task(item)))
+		}
+
+		async function openDb() {
+			const database = await clientDatabase.current.openDatabase()
+			db.current = database
+			getDbData(database)
+		}
+
+		openDb()
+	}, [])
+
+	useEffect(() => {
 		// 當計時器還沒開始，然而有任一任務需開始倒數時，啟動倒數
 		if (mode !== 'start' && tasks.some((task) => task.countdown)) {
 			start()
@@ -115,6 +133,8 @@ const Tasks: React.FC = () => {
 		const { taskName, ...restData } = data
 		const safeName = taskName.replace(/</g, '').replace(/>/g, '')
 		const task = new Task({ ...restData, taskName: safeName })
+		clientDatabase.current.addData<Task>(db.current, task)
+
 		setTasks((previous) => [...previous, task])
 	}
 
