@@ -14,7 +14,7 @@ import useTimer from '../hooks/useTimer'
 
 const schema = yup
 	.object({
-		name: yup.string().required('Task name is required'),
+		taskName: yup.string().required('Task name is required'),
 		isRepeat: yup.boolean().required(),
 		hour: yup
 			.number()
@@ -110,9 +110,9 @@ const Tasks: React.FC = () => {
 	}
 
 	const createTask = (data: TaskProps): void => {
-		const { name, ...restData } = data
-		const safeName = name.replace(/</g, '').replace(/>/g, '')
-		const task = new Task({ ...restData, name: safeName })
+		const { taskName, ...restData } = data
+		const safeName = taskName.replace(/</g, '').replace(/>/g, '')
+		const task = new Task({ ...restData, taskName: safeName })
 		setTasks((previous) => [...previous, task])
 	}
 
@@ -207,12 +207,12 @@ const Tasks: React.FC = () => {
 									<label className="text-gray-secondary-600">
 										Task Name
 										<input
-											{...register('name')}
+											{...register('taskName')}
 											className="ml-2 outline-none rounded-lg px-3 py-1 text-gray-800 border-gray-secondary-600 border-2 border-solid focus:border-gray-secondary-900"
 										/>
 									</label>
 
-									<Transition show={Boolean(errors.name)} as={Fragment}>
+									<Transition show={Boolean(errors.taskName)} as={Fragment}>
 										<div className="mt-1">
 											<Transition.Child
 												as={Fragment}
@@ -223,7 +223,9 @@ const Tasks: React.FC = () => {
 												leaveFrom="opacity-100 scale-100"
 												leaveTo="opacity-0 scale-95"
 											>
-												<span className="block text-red-400 text-sm">{errors.name?.message}</span>
+												<span className="block text-red-400 text-sm">
+													{errors.taskName?.message}
+												</span>
 											</Transition.Child>
 										</div>
 									</Transition>

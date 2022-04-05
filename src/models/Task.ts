@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface ITask {
 	id: string
-	name: string
+	taskName: string
 	isRepeat: boolean
 	time: number //millisecond
 	countdown?: boolean // 是否開始倒數
@@ -20,7 +20,7 @@ export interface TaskProps extends Omit<ITask, 'id' | 'start' | 'stop'> {
 
 class Task implements ITask {
 	readonly id: string
-	name: string
+	taskName: string
 	isRepeat: boolean
 	time: number
 	countdown?: boolean | undefined
@@ -29,7 +29,7 @@ class Task implements ITask {
 
 	constructor(props: TaskProps) {
 		this.id = props.id ?? uuidv4()
-		this.name = props.name
+		this.taskName = props.taskName
 		this.isRepeat = props.isRepeat
 		this.time = props.time
 
@@ -71,7 +71,7 @@ class Task implements ITask {
 	}
 
 	notify(): void {
-		new Notification(this.name, { body: '時間到囉' })
+		new Notification(this.taskName, { body: '時間到囉' })
 	}
 }
 
