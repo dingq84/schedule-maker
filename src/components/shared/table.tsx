@@ -43,14 +43,14 @@ interface TableProps<T extends object> extends HTMLAttributes<HTMLDivElement> {
 	}
 }
 
-function calculatePagination(currentPage: number, lastPage: number): number[] {
-	const start =
-		currentPage === lastPage ? Math.max(1, currentPage - 8) : Math.max(1, currentPage - 4)
-	const end = Math.min(lastPage, start + 8)
-	const length = end - start + 1
+// function calculatePagination(currentPage: number, lastPage: number): number[] {
+// 	const start =
+// 		currentPage === lastPage ? Math.max(1, currentPage - 8) : Math.max(1, currentPage - 4)
+// 	const end = Math.min(lastPage, start + 8)
+// 	const length = end - start + 1
 
-	return Array.from(Array(length), (_, index) => index + start)
-}
+// 	return Array.from(Array(length), (_, index) => index + start)
+// }
 
 const Table = <T extends object>(props: TableProps<T>) => {
 	const {
@@ -58,20 +58,20 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		data,
 		headerFixed = true,
 		pagination,
-		disabledPagination = false,
+		// disabledPagination = false,
 		tableOptions = {},
 		slots,
 		handleRowClick,
-		handleSort,
+		// handleSort,
 		...restProps
 	} = props
 	const {
-		currentPage,
-		lastPage,
+		// currentPage,
+		// lastPage,
 		totalRows,
 		pageSize = 10,
-		nextPage: propNextPage,
-		goPage,
+		// nextPage: propNextPage,
+		// goPage,
 	} = pagination
 
 	const [totalWidth, setTotalWidth] = useState(0)
@@ -116,12 +116,12 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		headerGroups,
 		rows,
 		prepareRow,
-		state,
-		canPreviousPage,
-		canNextPage,
-		previousPage,
-		nextPage,
-		gotoPage,
+		// state,
+		// canPreviousPage,
+		// canNextPage,
+		// previousPage,
+		// nextPage,
+		// gotoPage,
 	} = useTable<T>(
 		{
 			columns: memoColumns,
@@ -138,7 +138,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		useSortBy,
 		usePagination
 	)
-	const { pageIndex, sortBy } = state
+	// const { sortBy } = state
 
 	useEffect(() => {
 		// 取 columns 的 width 總和和實際 element 的 width 兩者間較大的值，並設定回 table header 和 body
@@ -152,11 +152,11 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		setTotalWidth(Math.max(columnTotalWidth, actualWidth))
 	}, [memoColumns])
 
-	useEffect(() => {
-		if (handleSort) {
-			handleSort(sortBy)
-		}
-	}, [sortBy])
+	// useEffect(() => {
+	// 	if (handleSort) {
+	// 		handleSort(sortBy)
+	// 	}
+	// }, [sortBy])
 
 	const handleClick = (data: Row<T>): void => {
 		if (handleRowClick) {
@@ -164,20 +164,20 @@ const Table = <T extends object>(props: TableProps<T>) => {
 		}
 	}
 
-	const handlePagination = (page: number): void => {
-		if (page > 0) {
-			nextPage()
-		} else {
-			previousPage()
-		}
+	// const handlePagination = (page: number): void => {
+	// 	if (page > 0) {
+	// 		nextPage()
+	// 	} else {
+	// 		previousPage()
+	// 	}
 
-		propNextPage(page)
-	}
+	// 	propNextPage(page)
+	// }
 
-	const handleSpecificPagination = (page: number): void => {
-		gotoPage(page - 1)
-		goPage(page)
-	}
+	// const handleSpecificPagination = (page: number): void => {
+	// 	gotoPage(page - 1)
+	// 	goPage(page)
+	// }
 
 	return (
 		/* eslint-disable react/jsx-key */
