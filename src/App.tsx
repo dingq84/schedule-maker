@@ -8,23 +8,27 @@ function App() {
 
 	useEffect(() => {
 		setHeight(window.innerHeight)
+		const errorMessage =
+			'Your browser does not yet support the notification function, which may affect your experience'
+		function handlePermission(result: NotificationPermission) {
+			switch (result) {
+				case 'granted':
+					break
+				default:
+					alert(errorMessage)
+			}
+		}
 
 		if (!window.Notification) {
 			console.warn('瀏覽器並未支援')
-			alert(
-				'Your browser does not yet support the notification function, which may affect your experience'
-			)
+			alert(errorMessage)
 		} else {
-			Notification.requestPermission().then(function (result) {
-				switch (result) {
-					case 'granted':
-						break
-					default:
-						alert(
-							'Your browser does not yet support the notification function, which may affect your experience'
-						)
-				}
-			})
+			try {
+				// Safari doesn't return a promise for requestPermissions and it throws a TypeError.
+				Promise.resolve(Notification.requestPermission()).then(handlePermission)
+			} catch (error) {
+				alert(errorMessage)
+			}
 		}
 	}, [])
 

@@ -11,11 +11,11 @@ const columns: CustomColumn<Task>[] = [
 	{
 		Header: 'Timer',
 		accessor: 'humanTime',
-		width: 140,
+		width: 130,
 	},
 	{
 		Header: 'Action',
-		width: 50,
+		width: 60,
 		cellSlot: 'action',
 	},
 ]
